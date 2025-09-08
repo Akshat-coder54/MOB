@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Books Page with Sun</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      cursor: none;
+    }
+
+    /* Background Video */
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    /* Custom Cursor */
+    .cursor-bubble {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      background: url('bubble.png') no-repeat center center / contain;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+
+    /* Sun in Top Right */
+    #sun {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 130px;
+      height: 130px;
+      background: url('circular.gif') no-repeat center center / contain;
+      z-index: 10;
+      transition: transform 0.3s ease;
+    }
+
+    /* Bounce Animation */
+    .bounce {
+      animation: bounceEffect 0.8s ease;
+    }
+
+    @keyframes bounceEffect {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+
+    /* Bubble Pop Effect */
+    .bubble {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: url('bob.png') no-repeat center center / contain;
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      animation: bubblePop 1.2s ease-out forwards;
+    }
+
+    @keyframes bubblePop {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    }
+
+    /* Books Styling */
+    .book-container {
+      perspective: 1200px;
+      position: fixed;
+      width: 140px;
+      height: 180px;
+      z-index: 2;
+    }
+
+    .book-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 1s ease;
+    }
+
+    .book-front, .book-page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border: 2px solid #ccc;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    }
+
+    .book-page {
+      background: #fff;
+      transform: rotateY(180deg);
+      overflow: hidden;
+    }
+
+    .book-page img, .book-front {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .book-container:hover .book-wrapper {
+      transform: rotateY(-160deg);
+    }
+
+    /* Book positions */
+    #book1-container { top: 50%; left: 15%; transform: translate(-50%, -50%); }
+    #book2-container { top: 50%; left: 45%; transform: translate(-50%, -50%); }
+    #book3-container { top: 50%; left: 75%; transform: translate(-50%, -50%); }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+
+    .modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      width: 300px;
+      max-width: 80%;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      text-align: center;
+      transform: scale(0);
+      transition: transform 0.4s ease;
+    }
+
+    .modal.show .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-content img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .modal-content img:hover {
+      transform: scale(1.05);
+    }
+
+    .close-btn, .detail-btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      color: #fff;
+    }
+
+    .close-btn { background: #ff5c5c; }
+    .detail-btn { background: #4CAF50; }
+  </style>
+</head>
+<body>
+  <video id="bg-video" autoplay muted loop playsinline>
+    <source src="landscape.mp4" type="video/mp4">
+  </video>
+
+  <div class="cursor-bubble" id="cursorBubble"></div>
+
+  <!-- Sun -->
+  <div id="sun"></div>
+  <script>
+  const son = document.getElementById('sun');
+
+  son.addEventListener('click', () => {
+    son.classList.remove('bounce'); // reset
+    void son.offsetWidth;           // trigger reflow
+    son.classList.add('bounce');    // add bounce animation
+  });
+</script>
+
+  <!-- Books -->
+  <div id="book1-container" class="book-container" data-detail="detail1.jpg" data-link="book.html?id=1">
+    <div class="book-wrapper">
+      <img src="flower.jpg" alt="Book 1" class="book-front">
+      <div class="book-page"><img src="war.jpg" alt="Inside Page"></div>
+    </div>
+  </div>
+
+  <div id="book2-container" class="book-container" data-detail="detail2.jpg" data-link="book.html?id=2">
+    <div class="book-wrapper">
+      <img src="aim.jpeg" alt="Book 2" class="book-front">
+      <div class="book-page"><img src="gamebot.jpg" alt="Inside Page"></div>
+    </div>
+  </div>
+
+  <div id="book3-container" class="book-container" data-detail="detail3.jpg" data-link="book.html?id=3">
+    <div class="book-wrapper">
+      <img src="time.jpg" alt="Book 3" class="book-front">
+      <div class="book-page"><img src="treasure.jpg" alt="Inside Page"></div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <img src="waar.jpg" alt="Detail Image">
+      <button class="detail-btn" onclick="window.location.href='pain.html'">pain!?</button>
+    </div>
+  </div>
+   <!-- Modal for Book 2 -->
+  <div id="modal2" class="modal">
+    <div class="modal-content">
+      <img src="spider.jpg" alt="Book 2 Detail">
+      <button class="detail-btn" onclick="window.location.href='book2.html'">Go</button>
+    </div>
+  </div>
+   <!-- Modal for Book 3 -->
+  <div id="modal3" class="modal">
+    <div class="modal-content">
+      <img src="world.jpg" alt="Book 3 Detail">
+      <button class="detail-btn" onclick="window.location.href='book3.html'">Go</button>
+    </div>
+  </div>
+
+  <script>
+    const cursorBubble = document.getElementById("cursorBubble");
+    const modal = document.getElementById("modal");
+    const modalImg = document.getElementById("modalImg");
+    const detailBtn = document.getElementById("detailBtn");
+    const closeBtn = document.querySelector(".close-btn");
+    const pages = document.querySelectorAll(".book-page");
+    const sun = document.getElementById("sun");
+    let currentLink = "#";
+
+    // Move custom cursor
+    document.addEventListener("mousemove", (e) => {
+      cursorBubble.style.left = `${e.clientX}px`;
+      cursorBubble.style.top = `${e.clientY}px`;
+    });
+
+    // Bubble explosion on click
+    document.addEventListener("click", (e) => {
+      if (e.target.closest(".modal-content") || e.target.closest(".book-container") || e.target.id === "sun") return;
+      for (let i = 0; i < 10; i++) createBubble(e.clientX, e.clientY);
+    });
+
+    function createBubble(x, y) {
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.style.left = `${x + (Math.random()*50-25)}px`;
+      bubble.style.top = `${y + (Math.random()*50-25)}px`;
+      document.body.appendChild(bubble);
+      setTimeout(() => bubble.remove(), 1200);
+    }
+
+    // Show modal on inside page click
+    pages.forEach(page => {
+      page.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const bookContainer = page.closest(".book-container");
+        modalImg.src = bookContainer.dataset.detail;
+        currentLink = bookContainer.dataset.link;
+        modal.classList.add("show");
+      });
+    });
+
+    
+    // Open Modals
+    document.querySelector("#book2-container .book-page").addEventListener("click", (e) => {
+      e.stopPropagation();
+      document.getElementById("modal2").classList.add("show");
+    });
+
+    document.querySelector("#book3-container .book-page").addEventListener("click", (e) => {
+      e.stopPropagation();
+      document.getElementById("modal3").classList.add("show");
+    });
+     document.querySelector("#book1-container .book-page").addEventListener("click", (e) => {
+      e.stopPropagation();
+      document.getElementById("modal").classList.add("show");
+    });
+
+
+    // Close Modals
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("show");
+    }
+
+    // Close modal by clicking outside
+    document.querySelectorAll(".modal").forEach(modal => {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.classList.remove("show");
+      });
+    });
+
+    detailBtn.addEventListener("click", () => {
+      window.location.href = currentLink;
+    });
+
+    closeBtn.addEventListener("click", () => modal.classList.remove("show"));
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.remove("show");
+    });
+
+    // Sun bounce on click
+    sun.addEventListener("click", () => {
+      sun.classList.add("bounce");
+      setTimeout(() => sun.classList.remove("bounce"), 800);
+    });
+  </script>
+</body>
+</html>
