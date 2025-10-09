@@ -6,48 +6,62 @@
   <title>TIME TO GROW</title>
   <style>
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
     }
 
     html, body {
-      width: 100%;
+      margin: 0;
+      padding: 0;
       height: 100%;
+      width: 100%;
       background: black;
       overflow: hidden;
     }
 
-    /* Outer wrapper centers everything */
+    /* Wrapper scales entire scene */
     .wrapper {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       width: 100vw;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: black;
       overflow: hidden;
     }
 
-    /* Fixed aspect ratio scene (like PC view) */
     .scene {
       position: relative;
-      width: 1920px;
-      height: 1080px;
+      width: 762px;   /* base width same as mainbg.jpg */
+      height: 508px;  /* base height same as mainbg.jpg */
       background: url('mainbg.jpg') no-repeat center center;
-      background-size: 100% 100%; /* keeps perfect alignment */
+      background-size: cover;
       transform-origin: center center;
-      cursor: pointer;
-      overflow: hidden;
-      animation: scaleScene 0.5s ease forwards;
+      animation: scaleScene 1s forwards;
     }
 
+    /* Auto-scale scene to fit screen with preserved ratio */
     @keyframes scaleScene {
       from { transform: scale(1); }
-      to { transform: scale(1); }
+      to { transform: scale(var(--scale)); }
     }
 
-    /* Doors perfectly aligned with PC background */
+    /* Light glow */
+    .light {
+      position: absolute;
+      top: 3%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,255,255,0));
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+      z-index: 3;
+    }
+
+    /* Doors */
     .door {
       position: absolute;
       background-size: contain;
@@ -58,41 +72,29 @@
     }
 
     .left-door {
-      top: 130px;
-      left: 620px;
-      width: 330px;
-      height: 850px;
+      top: 12%;
+      left: 31%;
+      width: 19%;
+      height: 87%;
       background-image: url('bl.jpg');
       transform-origin: left center;
     }
 
     .right-door {
-      top: 130px;
-      left: 970px;
-      width: 330px;
-      height: 850px;
+      top: 12%;
+      left: 50%;
+      width: 19%;
+      height: 87%;
       background-image: url('br.jpg');
       transform-origin: right center;
     }
 
-    .light {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,255,255,0));
-      opacity: 0;
-      transition: opacity 1.5s ease-in-out;
-      z-index: 3;
-    }
-
     .open .left-door {
-      transform: perspective(1000px) rotateY(-120deg);
+      transform: perspective(800px) rotateY(-120deg);
     }
 
     .open .right-door {
-      transform: perspective(1000px) rotateY(120deg);
+      transform: perspective(800px) rotateY(120deg);
     }
 
     .open .light {
@@ -108,8 +110,8 @@
       color: white;
       text-shadow: 0 0 10px black;
       z-index: 4;
+      pointer-events: none;
     }
-
   </style>
 </head>
 <body>
@@ -124,5 +126,28 @@
   </div>
 
   <script>
-    const scene = document.
+    const scene = document.getElementById('doorScene');
+    const sceneWidth = 762;
+    const sceneHeight = 508;
 
+    function resizeScene() {
+      const scaleX = window.innerWidth / sceneWidth;
+      const scaleY = window.innerHeight / sceneHeight;
+      const scale = Math.min(scaleX, scaleY); // keeps full scene visible
+
+      document.documentElement.style.setProperty('--scale', scale);
+    }
+
+    window.addEventListener('resize', resizeScene);
+    resizeScene();
+
+    scene.addEventListener('click', () => {
+      scene.classList.add('open');
+      setTimeout(() => {
+        window.location.href = "obito.html";
+      }, 1000);
+    });
+  </script>
+
+</body>
+</html>
