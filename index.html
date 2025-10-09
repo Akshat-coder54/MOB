@@ -5,50 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>TIME TO GROW</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
       width: 100%;
-      background: black;
+      height: 100%;
       overflow: hidden;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    /* Wrapper scales entire scene */
+    /* Outer wrapper centers the scene */
     .wrapper {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       width: 100vw;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      background: black;
+    }
+
+    /* Scene keeps original background aspect ratio (762x508) */
+    .scene {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      aspect-ratio: 762 / 508; /* maintain original ratio */
+      background: url('mainbg.jpg') no-repeat center center;
+      background-size: 100% 100%;
+      cursor: pointer;
       overflow: hidden;
     }
 
-    .scene {
-      position: relative;
-      width: 762px;   /* base width same as mainbg.jpg */
-      height: 508px;  /* base height same as mainbg.jpg */
-      background: url('mainbg.jpg') no-repeat center center;
-      background-size: cover;
-      transform-origin: center center;
-      animation: scaleScene 1s forwards;
-    }
-
-    /* Auto-scale scene to fit screen with preserved ratio */
-    @keyframes scaleScene {
-      from { transform: scale(1); }
-      to { transform: scale(var(--scale)); }
-    }
-
-    /* Light glow */
+    /* Light overlay */
     .light {
       position: absolute;
       top: 3%;
@@ -64,18 +55,18 @@
     /* Doors */
     .door {
       position: absolute;
-      background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
+      background-size: contain;
       z-index: 2;
       transition: transform 1.5s ease-in-out;
     }
 
     .left-door {
       top: 12%;
-      left: 31%;
-      width: 19%;
-      height: 87%;
+      left: 32%;
+      width: 18%;
+      height: 89%;
       background-image: url('bl.jpg');
       transform-origin: left center;
     }
@@ -83,30 +74,24 @@
     .right-door {
       top: 12%;
       left: 50%;
-      width: 19%;
-      height: 87%;
+      width: 18%;
+      height: 88%;
       background-image: url('br.jpg');
       transform-origin: right center;
     }
 
-    .open .left-door {
-      transform: perspective(800px) rotateY(-120deg);
-    }
+    /* Door animation */
+    .open .left-door { transform: perspective(800px) rotateY(-120deg); }
+    .open .right-door { transform: perspective(800px) rotateY(120deg); }
+    .open .light { opacity: 1; }
 
-    .open .right-door {
-      transform: perspective(800px) rotateY(120deg);
-    }
-
-    .open .light {
-      opacity: 1;
-    }
-
+    /* Message */
     .message {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 2rem;
+      font-size: clamp(1rem, 2vw, 2rem);
       color: white;
       text-shadow: 0 0 10px black;
       z-index: 4;
@@ -127,19 +112,6 @@
 
   <script>
     const scene = document.getElementById('doorScene');
-    const sceneWidth = 762;
-    const sceneHeight = 508;
-
-    function resizeScene() {
-      const scaleX = window.innerWidth / sceneWidth;
-      const scaleY = window.innerHeight / sceneHeight;
-      const scale = Math.min(scaleX, scaleY); // keeps full scene visible
-
-      document.documentElement.style.setProperty('--scale', scale);
-    }
-
-    window.addEventListener('resize', resizeScene);
-    resizeScene();
 
     scene.addEventListener('click', () => {
       scene.classList.add('open');
@@ -147,6 +119,25 @@
         window.location.href = "obito.html";
       }, 1000);
     });
+
+    // Optional: ensure scene scales on orientation change
+    function scaleScene() {
+      const wrapper = document.querySelector('.wrapper');
+      const sceneRatio = 762 / 508;
+      const windowRatio = window.innerWidth / window.innerHeight;
+
+      if(windowRatio > sceneRatio) {
+        scene.style.height = '100%';
+        scene.style.width = 'auto';
+      } else {
+        scene.style.width = '100%';
+        scene.style.height = 'auto';
+      }
+    }
+
+    window.addEventListener('resize', scaleScene);
+    window.addEventListener('orientationchange', scaleScene);
+    scaleScene();
   </script>
 
 </body>
