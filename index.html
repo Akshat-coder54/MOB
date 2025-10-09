@@ -18,17 +18,17 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       background: url('mainbg.jpg') no-repeat center center;
-      background-size: cover; /* fill entire screen */
+      background-size: 100% 100%; /* fills entire screen */
       cursor: pointer;
       overflow: hidden;
     }
 
     .light {
       position: absolute;
-      top: 3%;
+      top: 0;
       left: 0;
       width: 100%;
       height: 100%;
@@ -47,21 +47,21 @@
       transition: transform 1.5s ease-in-out;
     }
 
-    /* Doors: position relative to scene's natural width (762) and height (508) */
-    .left-door, .right-door {
-      width: 43.5%;  /* 331/762 = ~43.5% of background width */
-      height: 148.6%; /* 754/508 = ~148.6% of background height */
-      top: 12%; /* same top % */
-    }
-
+    /* Doors aligned proportionally */
     .left-door {
-      left: 32%; /* tweak to match exact alignment */
+      top: 12%;
+      left: 28%;
+      width: 18%;
+      height: 88%;
       background-image: url('bl.jpg');
       transform-origin: left center;
     }
 
     .right-door {
-      left: 50%; /* tweak to match exact alignment */
+      top: 12%;
+      left: 54%;
+      width: 18%;
+      height: 88%;
       background-image: url('br.jpg');
       transform-origin: right center;
     }
@@ -84,11 +84,12 @@
   </style>
 </head>
 <body>
+
   <div class="scene" id="doorScene">
     <div class="door left-door"></div>
     <div class="door right-door"></div>
     <div class="light"></div>
-   
+>
 
   <script>
     const scene = document.getElementById('doorScene');
@@ -99,33 +100,7 @@
         window.location.href = "obito.html";
       }, 1000);
     });
-
-    // Optional: adjust door sizes dynamically to match screen ratio
-    function adjustDoors() {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const bgRatio = 762 / 508;
-      const windowRatio = w / h;
-      const scale = windowRatio > bgRatio ? h / 508 : w / 762;
-      
-      const leftDoor = document.querySelector('.left-door');
-      const rightDoor = document.querySelector('.right-door');
-
-      leftDoor.style.width = (331 * scale) + 'px';
-      leftDoor.style.height = (754 * scale) + 'px';
-      rightDoor.style.width = (331 * scale) + 'px';
-      rightDoor.style.height = (754 * scale) + 'px';
-
-      leftDoor.style.top = (0.12 * h) + 'px';
-      rightDoor.style.top = (0.12 * h) + 'px';
-
-      leftDoor.style.left = (0.32 * w) + 'px';
-      rightDoor.style.left = (0.50 * w) + 'px';
-    }
-
-    window.addEventListener('resize', adjustDoors);
-    window.addEventListener('orientationchange', adjustDoors);
-    adjustDoors();
   </script>
+
 </body>
 </html>
