@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>TIME TO GROW</title>
   <style>
     * {
@@ -12,37 +12,38 @@
     }
 
     body {
-      height: 100vh;
       width: 100vw;
+      height: 100vh;
+      background: black;
+      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: black;
-      overflow: hidden;
     }
 
-    /* Wrapper that scales automatically */
+    /* Core container (base PC size for scaling) */
     .scene {
       position: relative;
-      width: 100vw;
-      height: 100vh;
+      width: 1920px;
+      height: 1080px;
       background: url('mainbg.jpg') no-repeat center center;
       background-size: cover;
-      overflow: hidden;
+      transform-origin: center center;
       cursor: pointer;
-      animation: fitToScreen 1s ease forwards;
+      overflow: hidden;
+      animation: scaleScene 0.5s ease forwards;
     }
 
-    @keyframes fitToScreen {
-      from {
-        transform: scale(1);
-      }
+    @keyframes scaleScene {
+      from { transform: scale(1); }
       to {
-        transform: scale(1);
+        transform: scale(
+          calc(min(100vw / 1920, 100vh / 1080))
+        );
       }
     }
 
-    /* Light behind doors */
+    /* Light */
     .light {
       position: absolute;
       top: 0;
@@ -55,7 +56,7 @@
       z-index: 3;
     }
 
-    /* Door panels - now responsive */
+    /* Doors */
     .door {
       position: absolute;
       background-size: contain;
@@ -69,7 +70,7 @@
       top: 12%;
       left: 32%;
       width: 18%;
-      height: 88%;
+      height: 89%;
       background-image: url('bl.jpg');
       transform-origin: left center;
     }
@@ -78,12 +79,11 @@
       top: 12%;
       left: 50%;
       width: 18%;
-      height: 88%;
+      height: 89%;
       background-image: url('br.jpg');
       transform-origin: right center;
     }
 
-    /* Opening animation */
     .open .left-door {
       transform: perspective(800px) rotateY(-120deg);
     }
@@ -96,38 +96,17 @@
       opacity: 1;
     }
 
-    /* Centered message - responsive text */
+    /* Message */
     .message {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: clamp(1rem, 4vw, 2.5rem);
+      font-size: clamp(1rem, 2vw, 2rem);
       color: white;
       text-shadow: 0 0 10px black;
       z-index: 4;
-      text-align: center;
-      width: 100%;
-    }
-
-    /* Smooth scaling based on device */
-    @media (max-width: 768px) {
-      .left-door, .right-door {
-        top: 10%;
-        width: 20%;
-        height: 80%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .left-door, .right-door {
-        top: 10%;
-        width: 22%;
-        height: 78%;
-      }
-      .message {
-        font-size: 1.5rem;
-      }
+      pointer-events: none;
     }
   </style>
 </head>
@@ -143,6 +122,7 @@
   <script>
     const scene = document.getElementById('doorScene');
 
+    // Door open animation
     scene.addEventListener('click', () => {
       scene.classList.add('open');
       setTimeout(() => {
@@ -150,14 +130,28 @@
       }, 1200);
     });
 
-    // Handle window resize - keeps scale consistent
+    // Function to dynamically scale the scene
+    function scaleScene() {
+      const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      scene.style.transform = `scale(${scale})`;
+    }
+
+    // Initial scale
+    scaleScene();
+
+    // Adjust on resize or device rotation
     window.addEventListener('resize', () => {
-      scene.style.animation = 'none';
-      void scene.offsetWidth; // reflow
-      scene.style.animation = 'fitToScreen 1s ease forwards';
+      scene.style.transition = 'transform 0.4s ease';
+      scaleScene();
+    });
+
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        scene.style.transition = 'transform 0.4s ease';
+        scaleScene();
+      }, 200);
     });
   </script>
 
 </body>
 </html>
-
