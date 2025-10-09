@@ -2,29 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Door Animation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>TIME TO GROW</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      height: 100vh;
+      padding: 0;
+      height: 100%;
       background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       overflow: hidden;
     }
 
+    /* Container with locked aspect ratio */
+    .wrapper {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: black;
+    }
+
+    /* Maintain 16:9 ratio (same as PC screen) */
     .scene {
-      position: absolute;
+      position: relative;
       width: 100%;
+      max-width: 100%;
       height: 100%;
+      aspect-ratio: 16 / 9; /* keeps consistent look */
       background: url('mainbg.jpg') no-repeat center center;
       background-size: cover;
       cursor: pointer;
+      overflow: hidden;
     }
 
-    /* Light behind doors */
     .light {
       position: absolute;
       top: 3%;
@@ -37,7 +49,6 @@
       z-index: 3;
     }
 
-    /* Door panels */
     .door {
       position: absolute;
       background-size: contain;
@@ -48,7 +59,6 @@
       pointer-events: auto;
     }
 
-    /* Adjust these numbers to fit EXACTLY over your door */
     .left-door {
       top: 12%;
       left: 32%;
@@ -60,14 +70,13 @@
 
     .right-door {
       top: 12%;
-      left: 48%;
+      left: 50%;
       width: 18%;
-      height: 88%;
+      height: 89%;
       background-image: url('br.jpg');
       transform-origin: right center;
     }
 
-    /* Opening animation */
     .open .left-door {
       transform: perspective(800px) rotateY(-120deg);
     }
@@ -80,37 +89,35 @@
       opacity: 1;
     }
 
-    /* Message */
     .message {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 2rem;
+      font-size: clamp(1rem, 2vw, 2rem);
       color: white;
       text-shadow: 0 0 10px black;
       z-index: 4;
-      pointer-events: auto;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
 
-  <div class="scene" id="doorScene">
-    <div class="door left-door"></div>
-    <div class="door right-door"></div>
-    <div class="light"></div>
-    <div class="message"></div>
+  <div class="wrapper">
+    <div class="scene" id="doorScene">
+      <div class="door left-door"></div>
+      <div class="door right-door"></div>
+      <div class="light"></div>
   </div>
 
   <script>
     const scene = document.getElementById('doorScene');
     scene.addEventListener('click', () => {
-      console.log('Scene clicked!');
       scene.classList.add('open');
       setTimeout(() => {
         window.location.href = "obito.html";
-      }, 1000); // Allow animation to complete before redirecting
+      }, 1000);
     });
   </script>
 
