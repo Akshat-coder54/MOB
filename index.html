@@ -1,107 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TIME TO GROW</title>
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: black;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIME TO GROW</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+    }
 
-  .scene {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: url('mainbg.jpg') no-repeat center center;
-    background-size: 100% 100%;
-    cursor: pointer;
-    overflow: hidden;
-  }
+    .scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: url('mainbg.jpg') no-repeat center center;
+      background-size: 100% 100%;
+      cursor: pointer;
+      overflow: hidden;
+    }
 
-  .door {
-    position: absolute;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    z-index: 2;
-  }
+    .door {
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      transition: transform 1.5s ease-in-out;
+      z-index: 2;
+    }
 
-  /* Keyframes to scale doors to match PC proportions on all devices */
-  @keyframes scaleLeftDoor {
-    from { top: 16vh; left: 33vw; width: 18vw; height: 76vh; }
-    to { top: 12%; left: 32%; width: 18%; height: 89%; }
-  }
+    /* Doors aligned relative to viewport */
+    .left-door {
+      top: 16vh;
+      left: 33vw;
+      width: 18vw;
+      height: 76vh;
+      background-image: url('bl.jpg');
+      transform-origin: left center;
+    }
 
-  @keyframes scaleRightDoor {
-    from { top: 16vh; left: 47vw; width: 18vw; height: 76vh; }
-    to { top: 12%; left: 48%; width: 18%; height: 88%; }
-  }
+    .right-door {
+      top: 16vh;
+      left: 47vw;
+      width: 18vw;
+      height: 76vh;
+      background-image: url('br.jpg');
+      transform-origin: right center;
+    }
 
-  .left-door {
-    background-image: url('bl.jpg');
-    transform-origin: left center;
-    animation: scaleLeftDoor 0.5s forwards;
-  }
+    .light {
+      position: absolute;
+      top: 3vh;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,255,255,0));
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+      z-index: 3;
+    }
 
-  .right-door {
-    background-image: url('br.jpg');
-    transform-origin: right center;
-    animation: scaleRightDoor 0.5s forwards;
-  }
+    .open .left-door { transform: perspective(800px) rotateY(-120deg); }
+    .open .right-door { transform: perspective(800px) rotateY(120deg); }
+    .open .light { opacity: 1; }
 
-  .light {
-    position: absolute;
-    top: 3%;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,255,255,0));
-    opacity: 0;
-    transition: opacity 1.5s ease-in-out;
-    z-index: 3;
-  }
-
-  .open .left-door { transform: perspective(800px) rotateY(-120deg); }
-  .open .right-door { transform: perspective(800px) rotateY(120deg); }
-  .open .light { opacity: 1; }
-
-  .message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2rem;
-    color: white;
-    text-shadow: 0 0 10px black;
-    z-index: 4;
-    pointer-events: none;
-  }
-</style>
+    .message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: white;
+      text-shadow: 0 0 10px black;
+      z-index: 4;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
 
-<div class="scene" id="doorScene">
-  <div class="door left-door"></div>
-  <div class="door right-door"></div>
-  <div class="light"></div>
+  <div class="scene" id="doorScene">
+    <div class="door left-door"></div>
+    <div class="door right-door"></div>
+    <div class="light"></div>
 
-<script>
-  const scene = document.getElementById('doorScene');
-  scene.addEventListener('click', () => {
-    scene.classList.add('open');
-    setTimeout(() => {
-      window.location.href = "obito.html";
-    }, 1000);
-  });
-</script>
+  <script>
+    const scene = document.getElementById('doorScene');
+    scene.addEventListener('click', () => {
+      scene.classList.add('open');
+      setTimeout(() => {
+        window.location.href = "obito.html";
+      }, 1000);
+    });
+  </script>
 
 </body>
 </html>
