@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To-Do List Centered</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+  }
+
+  #todoBox {
+    width: 400px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .header {
+    background: #003558;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  ul {
+    list-style: none;
+    padding: 15px;
+    margin: 0;
+    flex-grow: 1;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  li {
+    background: #e8f4ff;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .delete {
+    color: red;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .inputArea {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    background: #f7f9fc;
+  }
+
+  input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    outline: none;
+  }
+
+  button.addBtn {
+    padding: 10px 15px;
+    border: none;
+    background: #023d64;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 8px;
+    font-weight: bold;
+  }
+
+  button.addBtn:hover {
+    background: #410166;
+  }
+</style>
+</head>
+<body>
+  <!-- Full-page background image -->
+  <img src="tobg.png" alt="Background" style="position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1;">
+
+  <!-- Centered To-Do List -->
+  <div id="todoBox">
+    <div class="header">TARGETS</div>
+    <ul id="taskList"></ul>
+    <div class="inputArea">
+      <input type="text" id="taskInput" placeholder="Type a note...">
+      <button class="addBtn" onclick="addTask()">Add</button>
+    </div>
+  </div>
+
+<script>
+  const taskInput = document.getElementById("taskInput");
+  const taskList = document.getElementById("taskList");
+
+  document.addEventListener("DOMContentLoaded", () => loadTasks());
+
+  function loadTasks() {
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.forEach(task => addTaskToDOM(task.text));
+  }
+
+  function addTask() {
+    const text = taskInput.value.trim();
+    if (!text) return;
+    addTaskToDOM(text);
+    saveTask(text);
+    taskInput.value = "";
+  }
+
+  function addTaskToDOM(text) {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span>${text}</span>
+      <span class="delete" onclick="deleteTask(this)">✖</span>
+    `;
+    taskList.appendChild(li);
+    taskList.scrollTop = taskList.scrollHeight;
+  }
+
+  function saveTask(text) {
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.push({ text });
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+
+  function deleteTask(el) {
+    const li = el.parentElement;
+    const text = li.querySelector("span").textContent;
+    li.remove();
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks = tasks.filter(t => t.text !== text);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+</script>
+
+</body>
+</html>

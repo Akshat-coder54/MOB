@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Custom Image Grid with Link Analysis & Time Tracking</title>
+<style>
+  :root { --glass: rgba(255,255,255,0.05); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #000;
+    color: #f1f5f9;
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+  }
+  .sidebar {
+    width: 250px;
+    background: var(--glass);
+    padding: 20px;
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .bg-button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    background: #3b82f6;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+  }
+  .bg-button:hover { background: #2563eb; }
+  .link-log {
+    font-size: 13px;
+    max-height: 200px;
+    overflow-y: auto;
+    color: #d1d5db;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  .log-item { margin-bottom: 8px; padding:2px 4px; border-radius:4px;}
+  .long-visit { background-color: #f87171; } 
+  .short-visit { background-color: #34d399; } 
+  .extra-image {
+    background: var(--glass);
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  .extra-image img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; }
+ .music-player {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #f87171;
+    text-emphasis-color: #f87171;
+    margin-top: 10px;
+  }
+  .music-player select, .music-player button {
+    margin: 5px 0;
+    width: 90%;
+    padding: 6px;
+    border-radius: 6px;
+    border: none;
+  }
+  .music-player audio { width: 90%; margin-top: 5px; }
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .parent-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #3b82f6;
+    cursor: pointer; 
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+  }
+  .parent-image img { width: 100%; height: 100%; object-fit: cover; }
+  .parent-image:hover { transform: scale(1.08); }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 500px;
+    width: 100%;
+  }
+  .card {
+    background: var(--glass);
+    border-radius: 12px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+  }
+  .card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .go-button {
+    padding: 6px 12px;
+    background: #10b981;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .go-button:hover { background: #059669; }
+</style>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <button class="bg-button" id="bgButton">Change Background</button>
+    <h3>Link Analysis</h3>
+    <div class="link-log" id="linkLog">No activity yet.</div>
+    <div class="extra-image">
+      <img src="wolf.jpeg" alt="Extra Image">
+       <!-- MUSIC PLAYER -->
+    <div class="music-player">
+      <select id="songSelect">
+        <option value="binku.mp3">BINKUSUNO</option>
+      </select>
+      <audio id="audioPlayer" controls style="width:90%; margin-top:5px; color: #f87171;"></audio>
+      <button id="playSong">Play Selected Song</button>
+    </div>
+  </div>
+    </div>
+  </div>
+    
+
+
+  <!-- CENTER CONTENT -->
+  <div class="content">
+    <div class="parent-image" id="parentImage">
+      <img src="owl.jpg" alt="Parent Image">
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const log = document.getElementById('linkLog');
+    const parentImage = document.getElementById('parentImage');
+      // Music Player
+  const songSelect = document.getElementById('songSelect');
+  const audioPlayer = document.getElementById('audioPlayer');
+  const playSong = document.getElementById('playSong');
+
+  playSong.addEventListener('click', ()=>{
+    const song = songSelect.value;
+    audioPlayer.src = song;
+    audioPlayer.play();
+  });
+
+    // Check returning from link to calculate duration
+    window.addEventListener('load', () => {
+      const saved = JSON.parse(localStorage.getItem('linkTimer'));
+      if(saved){
+        const duration = Math.round((Date.now() - saved.startTime)/1000);
+        addLog(`${saved.name} (visited ${duration}s)`, saved.url, duration);
+        localStorage.removeItem('linkTimer');
+      }
+    });
+
+    function addLog(name, url, duration){
+      const time = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.className = 'log-item ' + (duration>=10 ? 'long-visit' : 'short-visit');
+      entry.textContent = `[${time}] ${name} (visited ${duration}s): ${url}`;
+      log.prepend(entry);
+    }
+
+    // Grid images with Go buttons only
+    const images = [
+      { src: "leet.jpg", link: "https://leetcode.com/problemset/",name: "LEETCODE" },
+      { src: "GFG.jpeg", link: "https://www.geeksforgeeks.org/", name: "GEEK FOR GEEK" },
+      { src: "code studio.jpg", link: "https://www.naukri.com/code360/problem-of-the-day?date=2025-09-07&difficulty=EASY", name: "code Studio" },
+      { src: "hack.png", link: "https://www.hackerrank.com/dashboard", name: "HackerRank" },
+      { src: "chef.png", link: "https://www.codechef.com/practice#programming-languages", name: "CodeChef" },
+      { src: "force.png", link: "https://codeforces.com/problemset", name: "CODEFORCE" },
+      { src: "git.png", link: "https://github.com/dashboard", name: "GITHUB" },
+      { src: "bit.jpeg", link: "https://www.interviewbit.com/practice/", name: "Interview BIT" },
+      { src: "contest.png", link: "https://atcoder.jp/home", name: "At Coder CONTEST" }
+    ];
+
+    const parentLink = "https://example.com/parent";
+
+    // Background media
+    const backgrounds = [
+      { type: 'image', src: 'green.jpg' },
+      { type: 'image', src: 'night.jpg' },
+      { type: 'image', src: 'The Earth.jpeg' },
+      { type: 'video', src: 'nature.mp4' },
+      { type: 'image', src: 'city.jpeg' },
+      { type: 'video', src:'sunny10.mp4' },
+      { type: 'image', src: 'duck.jpg' }
+    ];
+
+    let currentBg = 0;
+    const bgContainer = document.createElement('div');
+    bgContainer.style.position='fixed';
+    bgContainer.style.top=0;
+    bgContainer.style.left=0;
+    bgContainer.style.width='100%';
+    bgContainer.style.height='100%';
+    bgContainer.style.zIndex='-1';
+    bgContainer.style.overflow='hidden';
+    document.body.appendChild(bgContainer);
+
+    backgrounds.forEach(bg=>{
+      let el;
+      if(bg.type==='video'){
+        el=document.createElement('video');
+        el.src=bg.src; el.muted=true; el.loop=true;
+      }else{
+        el=document.createElement('img');
+        el.src=bg.src;
+      }
+      el.style.width='100%';
+      el.style.height='100%';
+      el.style.objectFit='cover';
+      el.style.display='none';
+      bg.element=el;
+      bgContainer.appendChild(el);
+    });
+
+    function showBackground(index){
+      backgrounds.forEach((bg,i)=>{
+        if(i===index){
+          bg.element.style.display='block';
+          if(bg.type==='video') bg.element.play();
+        }else{
+          bg.element.style.display='none';
+          if(bg.type==='video') bg.element.pause();
+        }
+      });
+    }
+
+    document.getElementById('bgButton').addEventListener('click',()=>{
+      currentBg = (currentBg + 1) % backgrounds.length;
+      showBackground(currentBg);
+    });
+    showBackground(currentBg);
+
+    // Parent image click
+    parentImage.onclick = ()=>{
+      localStorage.setItem('linkTimer', JSON.stringify({name:'codolio', url:"https://codolio.com/", startTime:Date.now()}));
+      window.location.href ="https://codolio.com/";
+    }
+
+    // Render grid
+    function renderGrid(){
+      grid.innerHTML='';
+      images.forEach(item=>{
+        const card=document.createElement('div'); card.className='card';
+        const img=document.createElement('img'); img.src=item.src; card.appendChild(img);
+
+        const goBtn=document.createElement('button'); goBtn.className='go-button'; goBtn.textContent='Go';
+        goBtn.onclick=e=>{
+          e.preventDefault();
+          localStorage.setItem('linkTimer', JSON.stringify({name:item.name, url:item.link, startTime:Date.now()}));
+          window.location.href=item.link;
+        }
+
+        card.appendChild(goBtn); grid.appendChild(card);
+      });
+    }
+    renderGrid();
+  </script>
+</body>
+</html>

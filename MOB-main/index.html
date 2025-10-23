@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Page Layout with Login</title>
+<style>
+  /* Body & Background */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #264653, #2a9d8f, #e9c46a, #f4a261, #e76f51);
+    background-size: 300% 300%;
+    animation: bgmove 15s infinite alternate;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @keyframes bgmove {
+    0% { background-position: left top; }
+    100% { background-position: right bottom; }
+  }
+
+  /* Login Button */
+  #loginBtn {
+    position: fixed;
+    top: 15px;
+    right: 10px;
+    background: #2a9d8f;
+    color: #fff;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 400;
+    transition: 0.3s;
+    z-index: 20;
+  }
+  #loginBtn:hover { background: #21867a; }
+
+  /* Popup Boxes */
+  .popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    width: 320px;
+    text-align: center;
+    z-index: 30;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .popup.active { display: block; opacity: 1; }
+  .popup h3 { margin-bottom: 10px; color: #264653; }
+  .popup input { width: 90%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 0.9rem; }
+  .popup button { width: 95%; background: #014a5c; color: white; border: none; padding: 8px; margin-top: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+  .popup button:hover { background: #023f4e; }
+  .switch { margin-top: 12px; font-size: 0.85rem; color: #333; }
+  .switch a { color: #004053; text-decoration: none; font-weight: 500; cursor: pointer; }
+  .switch a:hover { text-decoration: underline; }
+
+  /* Main Layout */
+  #mainLayout {
+    display: flex;
+    width: 90%;
+    max-width: 1200px;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 20px;
+  }
+
+  #leftSection, #rightSection {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  #centerSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #centerTextBox {
+    background: rgba(0,0,0,0.5);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    color: white;
+    margin-top: 20px; /* space below image */
+    max-width: 90%;
+  }
+
+  #centerTextBox p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  #centerSection img {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 10px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    #mainLayout {
+      flex-direction: column;
+      align-items: center;
+    }
+    #leftSection, #centerSection, #rightSection {
+      width: 90%;
+    }
+    #centerSection img { max-width: 90%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Login Button -->
+<button id="loginBtn">Login</button>
+
+<!-- Login Popup -->
+<div id="loginPopup" class="popup">
+  <h3>Login</h3>
+  <input type="text" id="loginUser" placeholder="Email or User ID" required>
+  <input type="password" id="loginPass" placeholder="Password" required>
+  <button id="loginSubmit">Login</button>
+  <div class="switch">Don’t have an account? <a onclick="toggleForm('signup')">Sign up</a></div>
+</div>
+
+<!-- Signup Popup -->
+<div id="signupPopup" class="popup">
+  <h3>Sign Up</h3>
+  <input type="text" id="firstName" placeholder="First Name" required>
+  <input type="text" id="middleName" placeholder="Middle Name">
+  <input type="text" id="lastName" placeholder="Last Name" required>
+  <input type="email" id="email" placeholder="Email ID" required>
+  <input type="password" id="password" placeholder="Password (min 8 chars, 1 symbol)" required>
+  <button id="signupSubmit">Sign Up</button>
+  <div class="switch">Already have an account? <a onclick="toggleForm('login')">Login</a></div>
+</div>
+
+<!-- Main Content -->
+<div id="mainLayout">
+  <!-- Left Content -->
+  <div id="leftSection">
+    <h3>Stop Procrastination/Start Doing</h3>
+    <p>Our platform is designed to eliminate time-wasting and help you build consistent habits through three powerful tools.</p>
+  </div>
+
+  <!-- Center Section -->
+  <div id="centerSection">
+    <!-- Center Image -->
+    <img src="center-image.png" alt="Center Image">
+
+    <!-- Motivational Text Box Below Image -->
+    <div id="centerTextBox">
+      <p>
+       Stop letting procrastination steal your time. Our unified platform is ready to help you focus, plan, and practice<br>
+              Access the Platform <br>
+        first ->[ Login / Sign Up ]     </p>
+    </div>
+  </div>
+
+  <!-- Right Content -->
+  <div id="rightSection">
+    <h3>Additional Info</h3>
+    <p>
+      1. Code Practice Hub<br>
+      The Problem Solved: No more jumping between dozens of coding sites.<br>
+      The Benefit: All your coding platforms in one place.<br><br>
+
+      2. Pomodoro Timer<br>
+      The Problem Solved: Distraction and burnout.<br>
+      The Benefit: Hyper-Focus in short bursts.<br><br>
+
+      3. Smart To-Do List<br>
+      The Problem Solved: confuse what to start first<br>
+      The Benefit: Define,set targets and conquer your day.
+    </p>
+  </div>
+</div>
+
+<script>
+  const loginBtn = document.getElementById("loginBtn");
+  const loginPopup = document.getElementById("loginPopup");
+  const signupPopup = document.getElementById("signupPopup");
+
+  if(localStorage.getItem("loggedIn") === "true") loginBtn.textContent = "Logout";
+
+  loginBtn.addEventListener("click", () => {
+    if(localStorage.getItem("loggedIn") === "true") {
+      localStorage.removeItem("loggedIn");
+      loginBtn.textContent = "Login";
+      alert("You have logged out!");
+    } else showPopup(loginPopup);
+  });
+
+  function showPopup(popup){ hideAll(); popup.classList.add("active"); }
+  function hideAll(){ loginPopup.classList.remove("active"); signupPopup.classList.remove("active"); }
+  function toggleForm(type){ type==='signup'? showPopup(signupPopup) : showPopup(loginPopup); }
+
+  document.getElementById("loginSubmit").addEventListener("click", handleLogin);
+  document.getElementById("signupSubmit").addEventListener("click", handleSignup);
+
+  document.addEventListener("keydown", (e) => { if(e.key==="Enter" && loginPopup.classList.contains("active")) handleLogin(); });
+
+  function handleLogin() {
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value.trim();
+    if(user && pass){ 
+      localStorage.setItem("loggedIn","true"); 
+      window.location.href="obito.html"; 
+    } else alert("Please fill in both fields!");
+  }
+
+  function handleSignup() {
+    const f = document.getElementById("firstName").value.trim();
+    const l = document.getElementById("lastName").value.trim();
+    const e = document.getElementById("email").value.trim();
+    const p = document.getElementById("password").value.trim();
+    const passReq=/^(?=.*[!@#$%^&*])(?=.{8,})/;
+    if(!f || !l || !e || !p){ alert("Please fill all required fields!"); return; }
+    if(!passReq.test(p)){ alert("Password must be at least 8 characters and include a symbol."); return; }
+    hideAll();
+    alert("Signup successful! Please login.");
+    showPopup(loginPopup);
+  }
+
+  window.onclick = function(event){ 
+    if(event.target===loginPopup || event.target===signupPopup) hideAll(); 
+  };
+</script>
+</body>
+</html>
